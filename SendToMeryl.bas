@@ -64,20 +64,9 @@ Sub SendToMeryl()
     
 '    ActiveDocument.SendMail
 
-
-    ' Now save the document to the final location
-    '
- '   MsgBox "3"
- '   ActiveDocument.SaveAs2 _
- '       FileName:=strFullName, _
- '       FileFormat:=wdFormatXMLDocument
-    
-    ' Yield execution to the OS to make sure Word handles the file handle change
-    DoEvents
-
     ' create the email and attach the temporary file
     '
-    MsgBox "4"
+    MsgBox "3"
     Dim olApp As Object
     Dim olMail As Object
     
@@ -101,6 +90,16 @@ Sub SendToMeryl()
         .Display
     
     End With
+
+    ' Now save the document to the final location
+    '
+    MsgBox "4"
+    ActiveDocument.SaveAs2 _
+        FileName:=strFullName, _
+        FileFormat:=wdFormatXMLDocument
+    
+    ' Yield execution to the OS to make sure Word handles the file handle change
+    DoEvents
 
     MsgBox "5"
     ' Restore user's original settings
