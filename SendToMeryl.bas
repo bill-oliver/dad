@@ -1,14 +1,110 @@
 Sub SendToMeryl()
-Dim olApp As Object, olMail As Object
-ActiveDocument.Save
-Set olApp = CreateObject("Outlook.Application")
-Set olMail = olApp.CreateItem(0)
-With olMail
- .To = "meryl.oliver@gmail.com"
- .CC = "bill@oliverassociates.ca"
- .Subject = "Draft for Review: " & ActiveDocument.Name
- .Body = "Hi Meryl," & vbCrLf & vbCrLf & "Please review the attached draft and return your edits."
- .Attachments.Add ActiveDocument.FullName
- .Display
-End With
+
+    Dim strFileName As String
+    Dim strFolderPath As String
+    Dim strFullName As String
+
+    strFolderPath = "C:\Users\Loliver\OneDrive\Documentation\Les2026\emails\"
+
+    strFileName = InputBox( _
+        "What would you like to call this letter?", _
+        "Send to Meryl")
+
+    If Trim(strFileName) = "" Then Exit Sub
+
+    strFileName = Replace(strFileName, "\", "-")
+    strFileName = Replace(strFileName, "/", "-")
+    strFileName = Replace(strFileName, ":", "-")
+    strFileName = Replace(strFileName, "*", "-")
+    strFileName = Replace(strFileName, "?", "")
+    strFileName = Replace(strFileName, """", "")
+    strFileName = Replace(strFileName, "<", "")
+    strFileName = Replace(strFileName, ">", "")
+    strFileName = Replace(strFileName, "|", "-")
+
+    strFullName = strFolderPath & strFileName & ".docx"
+
+    If Dir(strFullName) <> "" Then
+        MsgBox _
+            "A draft named '" & strFileName & _
+            "' already exists." & vbCrLf & vbCrLf & _
+            "Please choose a different name.", _
+            vbExclamation, _
+            "Name Already Used"
+        Exit Sub
+    End If
+
+    ' Store original setting so we can restore it later
+    originalBackgroundSetting = Options.BackgroundSave
+    
+    ' FORCE Word to wait for file writing to completely finish
+    Options.BackgroundSave = False
+    
+    MsgBox "1"
+    ActiveDocument.SaveAs2 _
+        FileName:=strFullName, _
+        FileFormat:=wdFormatXMLDocument
+
+    ' Yield execution to the OS to make sure Word handles the file handle change
+    DoEvents
+    
+    MsgBox "2"
+    Dim strSavedFile As String
+    strSavedFile = strFullName
+    
+    If Dir(strSavedFile) = "" Then
+        MsgBox "Could not find saved file:" & vbCrLf & strSavedFile
+        Exit Sub
+    End If
+    
+Rem    ActiveDocument.SendMail
+    
+    Dim strTempFile As String
+    strTempFile = Environ("TEMP") & "\" & strFileName & ".docx"
+    
+    MsgBox "3"
+    ActiveDocument.SaveAs2 _
+        FileName:=strTempFile, _
+        FileFormat:=wdFormatXMLDocument
+    ' Yield execution to the OS to make sure Word handles the file handle change
+    DoEvents
+    
+    MsgBox "4"
+    ActiveDocument.SaveAs2 _
+        FileName:=strFullName, _
+        FileFormat:=wdFormatXMLDocument
+    
+    ' Yield execution to the OS to make sure Word handles the file handle change
+    DoEvents
+    
+    MsgBox "5"
+    Dim olApp As Object
+    Dim olMail As Object
+    
+    Set olApp = CreateObject("Outlook.Application")
+    Set olMail = olApp.CreateItem(0)
+    
+    With olMail
+    
+        .To = "meryl.oliver@gmail.com"
+        .CC = "bill@oliverassociates.ca"
+    
+        .Subject = "Draft for Review: " & FileName
+    
+        .Body = "Hi Meryl," & vbCrLf & vbCrLf & _
+                "Please review the attached draft and return your edits." & _
+                vbCrLf & vbCrLf & _
+                "Thanks."
+    
+        .Attachments.Add strTempFile
+    
+        .Display
+    
+    End With
+
+    ' Restore user's original settings
+    Options.BackgroundSave = originalBackgroundSetting
+
+    ActiveDocument.Close SaveChanges:=False
+    
 End Sub
