@@ -34,12 +34,18 @@ Sub SendToMeryl()
     strFullName = strFolderPath & strFileName & ".docx"
 
     If Dir(strFullName) <> "" Then
-        MsgBox _
-            "A draft named '" & strFileName & _
-            "' already exists." & vbCrLf & vbCrLf & _
-            "Please choose a different name.", _
-            vbExclamation, _
-            "Name Already Used"
+        Dim response As VbMsgBoxResult
+
+        response = MsgBox( _
+            "A draft named '" & strFileName & "' already exists." & vbCrLf & vbCrLf & _
+            "Do you want to open the existing file?", _
+            vbYesNo + vbQuestion, _
+            "Name Already Used")
+
+        If response = vbYes Then
+            Documents.Open FileName:=strFullName
+        End If
+
         Exit Sub
     End If
 
