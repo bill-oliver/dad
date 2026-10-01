@@ -6,7 +6,7 @@ Sub SendToMeryl()
     Dim strTempFile As String
 
 '    strFolderPath = "C:\Users\Loliver\OneDrive\Documentation\Les2026\emails\"
-    strFolderPath = "C:\Users\boliv\OneDrive\Documents\00Temp\test"
+    strFolderPath = "C:\Users\boliv\OneDrive\Documents\00Temp\test\"
 
     strFileName = InputBox( _
         "What would you like to call this letter?", _
@@ -111,6 +111,8 @@ Sub SendToMeryl()
     '  Shutdown word without saving changes
     '
 '    ActiveDocument.Close SaveChanges:=False
-    Application.Quit SaveChanges:=wdDoNotSaveChanges
+'    Application.Quit SaveChanges:=wdDoNotSaveChanges
     
 End Sub
+
+
