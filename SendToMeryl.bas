@@ -44,10 +44,10 @@ Sub SendToMeryl()
     End If
 
     ' Store original setting so we can restore it later
-'    originalBackgroundSetting = Options.BackgroundSave
+    originalBackgroundSetting = Options.BackgroundSave
     
     ' FORCE Word to wait for file writing to completely finish
-'    Options.BackgroundSave = False
+    Options.BackgroundSave = False
 
     ' Save the document to a temporary file first
     '
@@ -101,14 +101,12 @@ Sub SendToMeryl()
     ' Now save the document to the final location
     '
     MsgBox "4"
-'    ActiveDocument.SaveAs2 _
-'        FileName:=strFullName, _
-'        FileFormat:=wdFormatXMLDocument
+    ActiveDocument.SaveAs2 _
+        FileName:=strFullName, _
+        FileFormat:=wdFormatXMLDocument
     
     ' Yield execution to the OS to make sure Word handles the file handle change
-'    DoEvents
-    
-    FileCopy strTempFile, strFullName
+    DoEvents
     
     Sleep 30000 ' Wait for 30 seconds
 
