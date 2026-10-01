@@ -3,8 +3,10 @@ Sub SendToMeryl()
     Dim strFileName As String
     Dim strFolderPath As String
     Dim strFullName As String
+    Dim strTempFile As String
 
-    strFolderPath = "C:\Users\Loliver\OneDrive\Documentation\Les2026\emails\"
+'    strFolderPath = "C:\Users\Loliver\OneDrive\Documentation\Les2026\emails\"
+    strFolderPath = "C:\Users\boliv\OneDrive\Documents\00Temp\test"
 
     strFileName = InputBox( _
         "What would you like to call this letter?", _
@@ -22,6 +24,7 @@ Sub SendToMeryl()
     strFileName = Replace(strFileName, ">", "")
     strFileName = Replace(strFileName, "|", "-")
 
+    strTempFile = Environ("TEMP") & "\" & strFileName & ".docx"
     strFullName = strFolderPath & strFileName & ".docx"
 
     If Dir(strFullName) <> "" Then
@@ -35,49 +38,46 @@ Sub SendToMeryl()
     End If
 
     ' Store original setting so we can restore it later
-    originalBackgroundSetting = Options.BackgroundSave
+'    originalBackgroundSetting = Options.BackgroundSave
     
     ' FORCE Word to wait for file writing to completely finish
-    Options.BackgroundSave = False
-    
+'    Options.BackgroundSave = False
+
+    ' Save the document to a temporary file first
+    '
     MsgBox "1"
     ActiveDocument.SaveAs2 _
-        FileName:=strFullName, _
+        FileName:=strTempFile, _
         FileFormat:=wdFormatXMLDocument
 
     ' Yield execution to the OS to make sure Word handles the file handle change
-    DoEvents
+'    DoEvents
     
     MsgBox "2"
     Dim strSavedFile As String
-    strSavedFile = strFullName
+    strSavedFile = strTempFile
     
     If Dir(strSavedFile) = "" Then
         MsgBox "Could not find saved file:" & vbCrLf & strSavedFile
         Exit Sub
     End If
     
-Rem    ActiveDocument.SendMail
-    
-    Dim strTempFile As String
-    strTempFile = Environ("TEMP") & "\" & strFileName & ".docx"
-    
+'    ActiveDocument.SendMail
+
+
+    ' Now save the document to the final location
+    '
     MsgBox "3"
-    ActiveDocument.SaveAs2 _
-        FileName:=strTempFile, _
-        FileFormat:=wdFormatXMLDocument
-    ' Yield execution to the OS to make sure Word handles the file handle change
-    DoEvents
-    
-    MsgBox "4"
     ActiveDocument.SaveAs2 _
         FileName:=strFullName, _
         FileFormat:=wdFormatXMLDocument
     
     ' Yield execution to the OS to make sure Word handles the file handle change
     DoEvents
-    
-    MsgBox "5"
+
+    ' create the email and attach the temporary file
+    '
+    MsgBox "4"
     Dim olApp As Object
     Dim olMail As Object
     
@@ -102,9 +102,16 @@ Rem    ActiveDocument.SendMail
     
     End With
 
+    MsgBox "5"
     ' Restore user's original settings
     Options.BackgroundSave = originalBackgroundSetting
 
-    ActiveDocument.Close SaveChanges:=False
+    ' Clean up temporary file
+'    Kill strTempFile
+
+    '  Shutdown word without saving changes
+    '
+'    ActiveDocument.Close SaveChanges:=False
+    Application.Quit SaveChanges:=wdDoNotSaveChanges
     
 End Sub
