@@ -67,10 +67,10 @@ Sub SendToMeryl()
 
     ' Now save the document to the final location
     '
-    MsgBox "3"
-    ActiveDocument.SaveAs2 _
-        FileName:=strFullName, _
-        FileFormat:=wdFormatXMLDocument
+ '   MsgBox "3"
+ '   ActiveDocument.SaveAs2 _
+ '       FileName:=strFullName, _
+ '       FileFormat:=wdFormatXMLDocument
     
     ' Yield execution to the OS to make sure Word handles the file handle change
     DoEvents
