@@ -1,3 +1,9 @@
+#If VBA7 Then
+    Private Declare PtrSafe Sub Sleep Lib "kernel32" (ByVal dwMilliseconds As LongPtr)
+#Else
+    Private Declare Sub Sleep Lib "kernel32" (ByVal dwMilliseconds As Long)
+#End If
+
 Sub SendToMeryl()
 
     Dim strFileName As String
@@ -78,13 +84,14 @@ Sub SendToMeryl()
         .To = "meryl.oliver@gmail.com"
         .CC = "bill@oliverassociates.ca"
     
-        .Subject = "Draft for Review: " & FileName
+        .Subject = "Draft for Review: " & strFileName
     
         .Body = "Hi Meryl," & vbCrLf & vbCrLf & _
                 "Please review the attached draft and return your edits." & _
                 vbCrLf & vbCrLf & _
-                "Thanks."
-    
+                "Thanks," & _
+                vbCrLf & vbCrLf & _
+                "Dad."
         .Attachments.Add strTempFile
     
         .Display
@@ -101,12 +108,14 @@ Sub SendToMeryl()
     ' Yield execution to the OS to make sure Word handles the file handle change
     DoEvents
 
+    Sleep 30000 ' Wait for 30 seconds
+
     MsgBox "5"
     ' Restore user's original settings
     Options.BackgroundSave = originalBackgroundSetting
 
     ' Clean up temporary file
-'    Kill strTempFile
+    Kill strTempFile
 
     '  Shutdown word without saving changes
     '
@@ -114,5 +123,7 @@ Sub SendToMeryl()
 '    Application.Quit SaveChanges:=wdDoNotSaveChanges
     
 End Sub
+
+
 
 
