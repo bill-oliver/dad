@@ -22,7 +22,7 @@ Sub SendToMeryl()
     strFileName = Replace(strFileName, ">", "")
     strFileName = Replace(strFileName, "|", "-")
 
-    strFullName = strFolderPath & strFileName & ".docx"
+    strFullName = strFolderPath & strFileName & ".docm"
 
     If Dir(strFullName) <> "" Then
         MsgBox _
@@ -37,7 +37,7 @@ Sub SendToMeryl()
 
     ActiveDocument.SaveAs2 _
         FileName:=strFullName, _
-        FileFormat:=wdFormatXMLDocument
+        FileFormat:=wdFormatXMLDocumentMacroEnabled
 
     ' Yield execution to the OS to make sure Word handles the file handle change
     DoEvents
