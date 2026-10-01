@@ -1,17 +1,9 @@
-#If VBA7 Then
-    Private Declare PtrSafe Sub Sleep Lib "kernel32" (ByVal dwMilliseconds As LongPtr)
-#Else
-    Private Declare Sub Sleep Lib "kernel32" (ByVal dwMilliseconds As Long)
-#End If
-
 Sub SendToMeryl()
 
     Dim strFileName As String
     Dim strFolderPath As String
     Dim strFullName As String
-'    Dim strTempFile As String
 
-'    strFolderPath = "C:\Users\Loliver\OneDrive\Documentation\Les2026\emails\"
     strFolderPath = "C:\Users\boliv\Documents\emails\"
 
     strFileName = InputBox( _
@@ -30,34 +22,19 @@ Sub SendToMeryl()
     strFileName = Replace(strFileName, ">", "")
     strFileName = Replace(strFileName, "|", "-")
 
-'    strTempFile = Environ("TEMP") & "\" & strFileName & ".docx"
     strFullName = strFolderPath & strFileName & ".docx"
 
     If Dir(strFullName) <> "" Then
-        Dim response As VbMsgBoxResult
-
-        response = MsgBox( _
-            "A draft named '" & strFileName & "' already exists." & vbCrLf & vbCrLf & _
-            "Do you want to open the existing file?", _
-            vbYesNo + vbQuestion, _
-            "Name Already Used")
-
-        If response = vbYes Then
-            Documents.Open FileName:=strFullName
-        End If
+        MsgBox _
+            "A draft named '" & strFileName & _
+            "' already exists." & vbCrLf & vbCrLf & _
+            "Please choose a different name.", _
+            vbExclamation, _
+            "Name Already Used"
 
         Exit Sub
     End If
 
-    ' Store original setting so we can restore it later
-'    originalBackgroundSetting = Options.BackgroundSave
-    
-    ' FORCE Word to wait for file writing to completely finish
-'    Options.BackgroundSave = False
-
-    ' Save the document to the final location
-    '
-    MsgBox "1"
     ActiveDocument.SaveAs2 _
         FileName:=strFullName, _
         FileFormat:=wdFormatXMLDocument
@@ -65,7 +42,6 @@ Sub SendToMeryl()
     ' Yield execution to the OS to make sure Word handles the file handle change
     DoEvents
     
-    MsgBox "2"
     Dim strSavedFile As String
     strSavedFile = strFullName
     
@@ -74,11 +50,8 @@ Sub SendToMeryl()
         Exit Sub
     End If
     
-'    ActiveDocument.SendMail
-
     ' create the email and attach the temporary file
     '
-    MsgBox "3"
     Dim olApp As Object
     Dim olMail As Object
     
@@ -104,28 +77,10 @@ Sub SendToMeryl()
     
     End With
 
-    ' Now save the document to the final location
-    '
-'    MsgBox "4"
-'    ActiveDocument.SaveAs2 _
-'        FileName:=strFullName, _
-'        FileFormat:=wdFormatXMLDocument
-    
-    ' Yield execution to the OS to make sure Word handles the file handle change
-'    DoEvents
-    
-'    Sleep 30000 ' Wait for 30 seconds
 
-    MsgBox "5"
     ' Restore user's original settings
     Options.BackgroundSave = originalBackgroundSetting
 
-    ' Clean up temporary file
-'    Kill strTempFile
-
-    '  Shutdown word without saving changes
-    '
-'    ActiveDocument.Close SaveChanges:=False
 '    Application.Quit SaveChanges:=wdDoNotSaveChanges
     
 End Sub
