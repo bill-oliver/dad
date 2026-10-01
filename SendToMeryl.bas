@@ -101,13 +101,15 @@ Sub SendToMeryl()
     ' Now save the document to the final location
     '
     MsgBox "4"
-    ActiveDocument.SaveAs2 _
-        FileName:=strFullName, _
-        FileFormat:=wdFormatXMLDocument
+'    ActiveDocument.SaveAs2 _
+'        FileName:=strFullName, _
+'        FileFormat:=wdFormatXMLDocument
     
     ' Yield execution to the OS to make sure Word handles the file handle change
-    DoEvents
-
+'    DoEvents
+    
+    FileCopy strTempFile, strFullName
+    
     Sleep 30000 ' Wait for 30 seconds
 
     MsgBox "5"
@@ -123,7 +125,3 @@ Sub SendToMeryl()
 '    Application.Quit SaveChanges:=wdDoNotSaveChanges
     
 End Sub
-
-
-
-
