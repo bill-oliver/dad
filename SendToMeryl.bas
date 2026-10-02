@@ -1,9 +1,12 @@
-'  SendToMeryl.bas:  macro to send the current documnent to meryl and copy me on the email.  
-'
-'  The macro should be associated with a button on the ribbon.  
-'  The file is saved in a dedicated folder as a macro-enabled document to presurve the macro for later editing
-'
 Sub SendToMeryl()
+
+    '  SendToMeryl.bas:  macro to send the current documnent to meryl and copy me on the email.  
+    '  ---------------
+    '
+    '  The macro should be associated with a button on the ribbon.  
+    '  The file is saved in a dedicated folder as a macro-enabled document to presurve the macro for later editing
+    '
+
 
     Dim strFileName As String
     Dim strFolderPath As String
