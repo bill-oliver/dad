@@ -2,10 +2,16 @@ Sub SendToMeryl()
     Dim draftDocument As Document
     Dim strFullName As String
     Dim strFileName As String
+    Dim strTo As String
+    Dim strCC As String
     Dim olApp As Object
     Dim olMail As Object
 
     On Error GoTo HandleError
+
+    ' Set the email addresses for email recipients.
+    strTo = "meryl.oliver@gmail.com"
+    strCC = "bill@oliverassociates.ca; johnnieo@shaw.ca"
 
     ' Keep a reference to this draft; Outlook taking focus should not change which document is closed.
     Set draftDocument = ActiveDocument
@@ -26,10 +32,10 @@ Sub SendToMeryl()
     Set olApp = CreateObject("Outlook.Application")
     Set olMail = olApp.CreateItem(0)
 
-    ' Display for review; the user sends the message from Outlook.
+    ' Display the message for review; Outlook remains open for the user to send it.
     With olMail
-        .To = "meryl.oliver@gmail.com"
-        .CC = "bill@oliverassociates.ca"
+        .To = strTo
+        .CC = strCC
         .Subject = "Draft for Review: " & strFileName
         .Body = "Hi Meryl," & vbCrLf & vbCrLf & _
                 "Please review the attached draft and return your edits." & _
@@ -40,8 +46,12 @@ Sub SendToMeryl()
         .Display
     End With
 
-    ' Close only the saved draft document, leaving Word and Outlook running.
-    draftDocument.Close SaveChanges:=wdDoNotSaveChanges
+    ' Close only this draft when other Word documents are open; quit Word if it is the last one.
+    If Application.Documents.Count = 1 Then
+        Application.Quit SaveChanges:=wdPromptToSaveChanges
+    Else
+        draftDocument.Close SaveChanges:=wdDoNotSaveChanges
+    End If
     Exit Sub
 
 HandleError:
