@@ -1,9 +1,13 @@
+Private const bDebug As Boolean = False;   ' Allow template to be opened directly for debugging;
+
 Private Const DRAFT_FOLDER As String = "C:\Users\boliv\Documents\emails\"  ' Test Location
 'Private Const DRAFT_FOLDER As String = "C:\Users\Loliver\Documents\emails\"
 
 ' When the template is opened directly, prompt for a new or existing draft.
 Sub AutoOpen()
-    ' Drafts are stored in DRAFT_FOLDER; only run startup outside that folder.
+
+    ' Drafts are stored in DRAFT_FOLDER; if we are in that folder, assume we are opening an existing file
+    ' Otherwise, start the draft workflow to create a new draft.
     If StrComp(ActiveDocument.Path & "\", DRAFT_FOLDER, vbTextCompare) <> 0 Then
         StartDraftWorkflow
     End If
@@ -27,7 +31,14 @@ Sub StartDraftWorkflow()
         vbYesNoCancel + vbQuestion, _
         "Drafts for Meryl")
 
-    If choice = vbCancel Then Exit Sub
+    If choice = vbCancel 
+        Then If bDebug Then
+            Exit Sub      ' Allow template to be opened directly for debugging.
+        else
+            starterDocument.Close SaveChanges:=wdDoNotSaveChanges  ' Get out 
+            Exit Sub
+        End If
+
     If choice = vbNo Then
         OpenDraft
         If Not ActiveDocument Is starterDocument Then
