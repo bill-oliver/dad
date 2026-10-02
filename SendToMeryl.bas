@@ -1,93 +1,50 @@
 Sub SendToMeryl()
-    '  SendToMeryl.bas:  macro to send the current documnent to Meryl and copy me on the email.
-    '
-    '  The macro should be associated with a button on the ribbon.
-    '  The file is saved in a dedicated folder as a macro-enabled document to presurve the macro for later editing
-    '
-
-
-    Dim strFileName As String
-    Dim strFolderPath As String
+    Dim draftDocument As Document
     Dim strFullName As String
-
-    strFolderPath = "C:\Users\Loliver\Documents\emails\"
-'    strFolderPath = "C:\Users\boliv\Documents\emails\"  ' Test location
-
-    strFileName = InputBox( _
-        "What would you like to call this letter?", _
-        "Send to Meryl")
-
-    If Trim(strFileName) = "" Then Exit Sub
-
-    strFileName = Replace(strFileName, "\", "-")
-    strFileName = Replace(strFileName, "/", "-")
-    strFileName = Replace(strFileName, ":", "-")
-    strFileName = Replace(strFileName, "*", "-")
-    strFileName = Replace(strFileName, "?", "")
-    strFileName = Replace(strFileName, """", "")
-    strFileName = Replace(strFileName, "<", "")
-    strFileName = Replace(strFileName, ">", "")
-    strFileName = Replace(strFileName, "|", "-")
-
-    strFullName = strFolderPath & strFileName & ".docm"
-
-    If Dir(strFullName) <> "" Then
-        MsgBox _
-            "A draft named '" & strFileName & _
-            "' already exists." & vbCrLf & vbCrLf & _
-            "Please choose a different name.", _
-            vbExclamation, _
-            "Name Already Used"
-
-        Exit Sub
-    End If
-
-    ActiveDocument.SaveAs2 _
-        FileName:=strFullName, _
-        FileFormat:=wdFormatXMLDocumentMacroEnabled
-
-    ' Yield execution to the OS to make sure Word handles the file handle change
-    DoEvents
-    
-    Dim strSavedFile As String
-    strSavedFile = strFullName
-    
-    If Dir(strSavedFile) = "" Then
-        MsgBox "Could not find saved file:" & vbCrLf & strSavedFile
-        Exit Sub
-    End If
-    
-    ' create the email and attach the temporary file
-    '
+    Dim strFileName As String
     Dim olApp As Object
     Dim olMail As Object
-    
+
+    On Error GoTo HandleError
+
+    ' Keep a reference to this draft; Outlook taking focus should not change which document is closed.
+    Set draftDocument = ActiveDocument
+    If draftDocument.Path = "" Then
+        MsgBox "Save this draft with the template's new-draft button before preparing the email.", _
+            vbExclamation, "Draft Not Saved"
+        Exit Sub
+    End If
+
+    ' Include the latest edits in the attachment before creating the email.
+    draftDocument.Save
+    strFullName = draftDocument.FullName
+    strFileName = draftDocument.Name
+    If InStrRev(strFileName, ".") > 0 Then
+        strFileName = Left$(strFileName, InStrRev(strFileName, ".") - 1)
+    End If
+
     Set olApp = CreateObject("Outlook.Application")
     Set olMail = olApp.CreateItem(0)
-    
+
+    ' Display for review; the user sends the message from Outlook.
     With olMail
-    
         .To = "meryl.oliver@gmail.com"
         .CC = "bill@oliverassociates.ca"
-    
         .Subject = "Draft for Review: " & strFileName
-    
         .Body = "Hi Meryl," & vbCrLf & vbCrLf & _
                 "Please review the attached draft and return your edits." & _
                 vbCrLf & vbCrLf & _
-                "Thanks," & _
-                vbCrLf & vbCrLf & _
+                "Thanks," & vbCrLf & vbCrLf & _
                 "Dad."
         .Attachments.Add strFullName
-    
         .Display
-    
     End With
 
+    ' Close only the saved draft document, leaving Word and Outlook running.
+    draftDocument.Close SaveChanges:=wdDoNotSaveChanges
+    Exit Sub
 
-    ' Restore user's original settings
-    Options.BackgroundSave = originalBackgroundSetting
-
-    Application.Quit SaveChanges:=wdDoNotSaveChanges
-    
+HandleError:
+    MsgBox "Could not prepare the review email: " & Err.Description, _
+        vbExclamation, "Send to Meryl"
 End Sub
