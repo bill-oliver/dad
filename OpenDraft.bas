@@ -1,8 +1,12 @@
-Private Const DRAFT_FOLDER As String = "C:\Users\Loliver\Documents\emails\"
+Private Const DRAFT_FOLDER As String = "C:\Users\boliv\Documents\emails\"  ' Test Location
+'Private Const DRAFT_FOLDER As String = "C:\Users\Loliver\Documents\emails\"
 
-' Word calls AutoNew when it creates a new document from this template.
-Sub AutoNew()
-    StartDraftWorkflow
+' When the template is opened directly, prompt for a new or existing draft.
+Sub AutoOpen()
+    ' Drafts are stored in DRAFT_FOLDER; only run startup outside that folder.
+    If StrComp(ActiveDocument.Path & "\", DRAFT_FOLDER, vbTextCompare) <> 0 Then
+        StartDraftWorkflow
+    End If
 End Sub
 
 Sub StartDraftWorkflow()
@@ -38,24 +42,26 @@ Sub StartDraftWorkflow()
         Exit Sub
     End If
 
-PromptForName:
-    strFileName = InputBox("What would you like to call this draft?", "New Draft")
-    If Trim$(strFileName) = "" Then Exit Sub
+    Do
+        strFileName = InputBox("What would you like to call this draft?", "New Draft")
+        If Trim$(strFileName) = "" Then Exit Sub
 
-    ' Replace characters that Windows does not allow in file names.
-    strFileName = Replace(strFileName, "\", "-")
-    strFileName = Replace(strFileName, "/", "-")
-    strFileName = Replace(strFileName, ":", "-")
-    strFileName = Replace(strFileName, "*", "-")
-    strFileName = Replace(strFileName, "?", "")
-    strFileName = Replace(strFileName, """", "")
-    strFileName = Replace(strFileName, "<", "")
-    strFileName = Replace(strFileName, ">", "")
-    strFileName = Replace(strFileName, "|", "-")
-    strFullName = DRAFT_FOLDER & strFileName & ".docm"
+        ' Replace characters that Windows does not allow in file names.
+        strFileName = Replace(strFileName, "\", "-")
+        strFileName = Replace(strFileName, "/", "-")
+        strFileName = Replace(strFileName, ":", "-")
+        strFileName = Replace(strFileName, "*", "-")
+        strFileName = Replace(strFileName, "?", "")
+        strFileName = Replace(strFileName, """", "")
+        strFileName = Replace(strFileName, "<", "")
+        strFileName = Replace(strFileName, ">", "")
+        strFileName = Replace(strFileName, "|", "-")
+        strFullName = DRAFT_FOLDER & strFileName & ".docm"
 
-    ' Reuse an existing draft or ask for a different name; never overwrite it silently.
-    If Dir$(strFullName) <> "" Then
+        If Dir$(strFullName) = "" Then Exit Do       ' **** BREAK FROM LOOP IF FILE DOES NOT EXIST ****
+
+        ' 
+        '  File already exists; ask the user if they want to reuse it or choose a different name.
         existingChoice = MsgBox( _
             "A draft named '" & strFileName & "' already exists." & vbCrLf & vbCrLf & _
             "Open the existing draft?", _
@@ -69,9 +75,7 @@ PromptForName:
         ElseIf existingChoice = vbCancel Then
             Exit Sub
         End If
-
-        GoTo PromptForName
-    End If
+    Loop
 
     ' Save the draft in Word's macro-enabled document format.
     ActiveDocument.SaveAs2 _
