@@ -1,4 +1,4 @@
-Private const bDebug As Boolean = False;   ' Allow template to be opened directly for debugging;
+Private const bDebug As Boolean = True   ' Allow template to be opened directly for debugging;
 
 Private Const DRAFT_FOLDER As String = "C:\Users\boliv\Documents\emails\"  ' Test Location
 'Private Const DRAFT_FOLDER As String = "C:\Users\Loliver\Documents\emails\"
@@ -31,13 +31,12 @@ Sub StartDraftWorkflow()
         vbYesNoCancel + vbQuestion, _
         "Drafts for Meryl")
 
-    If choice = vbCancel 
-        Then If bDebug Then
-            Exit Sub      ' Allow template to be opened directly for debugging.
-        else
-            starterDocument.Close SaveChanges:=wdDoNotSaveChanges  ' Get out 
-            Exit Sub
+    If choice = vbCancel Then 
+        If Not bDebug Then
+            starterDocument.Close SaveChanges:=wdDoNotSaveChanges  ' Don't allow access to the template
         End If
+        Exit Sub
+    End If
 
     If choice = vbNo Then
         OpenDraft
