@@ -1,9 +1,7 @@
 Sub SendToMeryl()
-
-    '  SendToMeryl.bas:  macro to send the current documnent to meryl and copy me on the email.  
-    '  ---------------
+    '  SendToMeryl.bas:  macro to send the current documnent to Meryl and copy me on the email.
     '
-    '  The macro should be associated with a button on the ribbon.  
+    '  The macro should be associated with a button on the ribbon.
     '  The file is saved in a dedicated folder as a macro-enabled document to presurve the macro for later editing
     '
 
@@ -12,7 +10,8 @@ Sub SendToMeryl()
     Dim strFolderPath As String
     Dim strFullName As String
 
-    strFolderPath = "C:\Users\boliv\Documents\emails\"  ' Test location
+    strFolderPath = "C:\Users\Loliver\Documents\emails\"
+'    strFolderPath = "C:\Users\boliv\Documents\emails\"  ' Test location
 
     strFileName = InputBox( _
         "What would you like to call this letter?", _
@@ -89,6 +88,6 @@ Sub SendToMeryl()
     ' Restore user's original settings
     Options.BackgroundSave = originalBackgroundSetting
 
-'    Application.Quit SaveChanges:=wdDoNotSaveChanges
+    Application.Quit SaveChanges:=wdDoNotSaveChanges
     
 End Sub
