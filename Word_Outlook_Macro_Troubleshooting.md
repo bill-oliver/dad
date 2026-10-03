@@ -1,3 +1,6 @@
+***note that this document describes some initial attempts to get the macro working in a onedrive folder***
+***after a number of attempts I decided to use a folder outside of onedrive***
+
 # Word/Outlook Macro Troubleshooting Session
 
 ## Goal
