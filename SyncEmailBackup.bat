@@ -1,7 +1,7 @@
 @echo off
 
 set SOURCE=C:\Users\Loliver\Documents\emails
-set DEST="C:\Users\Loliver\OneDrive\Documentation\backups\emails"
+set DEST=C:\Users\Loliver\OneDrive\Documentation\backups\emails
 set LOG=C:\Users\Loliver\OneDrive\Documentation\backups\EmailBackupSync.log
 
 echo ================================================== >> "%LOG%"
